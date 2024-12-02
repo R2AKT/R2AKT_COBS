@@ -2,9 +2,9 @@
  *
  *    FILE NAME : r2akt_cobs.c
  *       AUTHOR : Sergey Dorozhkin (R2AKT)
- *         DATE : 08-may-2024
+ *         DATE : 27-november-2024
  *      VERSION : 0.0.1
- * MODIFICATION : 1
+ * MODIFICATION : 2
  *      PURPOSE : COBS library
  *          URL : https://github.com/R2AKT/r2akt_cobs
  *
@@ -21,7 +21,8 @@
 		extern "C" {
 	#endif
  /*****************************************************************************/
-
+	#define _COBEND 0x00
+ /*****************************************************************************/
 	size_t StuffData(uint8_t *dst, const uint8_t *src, size_t size);
 	size_t DeStuffData(uint8_t *dst, const uint8_t *src, size_t size);
 

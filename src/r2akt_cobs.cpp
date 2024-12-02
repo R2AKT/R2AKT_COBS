@@ -2,9 +2,9 @@
  *
  *    FILE NAME : r2akt_cobs.cpp
  *       AUTHOR : Sergey Dorozhkin (R2AKT)
- *         DATE : 08-may-2024
+ *         DATE : 27-november-2024
  *      VERSION : 0.0.1
- * MODIFICATION : 1
+ * MODIFICATION : 2
  *      PURPOSE : COBS library
  *          URL : https://github.com/R2AKT/r2akt_cobs
  *
@@ -17,15 +17,6 @@
 #include <stddef.h>
 
  /*****************************************************************************/
-
-/*
- * StuffData byte stuffs "length" bytes of data
- * at the location pointed to by "ptr", writing
- * the output to the location pointed to by "dst".
- *
- * Returns the length of the encoded data.
- */
-
 size_t StuffData(uint8_t *dst, const uint8_t *src, size_t size) {
 	const uint8_t *start = dst, *end = src + size;
 	uint8_t code, *code_ptr; /* Where to insert the leading count */
@@ -37,7 +28,7 @@ size_t StuffData(uint8_t *dst, const uint8_t *src, size_t size) {
 	while (src < end) {
 		if (code != 0xFF) {
 			uint8_t c = *src++;
-			if (c != 0x0) {
+			if (c != _COBEND) {
 				*dst++ = c;
 				code++;
 				continue;
@@ -54,30 +45,23 @@ size_t StuffData(uint8_t *dst, const uint8_t *src, size_t size) {
 }
 
  /*****************************************************************************/
-/*
- * DeStuffData decodes "length" bytes of data at
- * the location pointed to by "ptr", writing the
- * output to the location pointed to by "dst".
- *
- * Returns the length of the decoded data
- * (which is guaranteed to be <= length).
- */
 size_t DeStuffData(uint8_t *dst, const uint8_t *src, size_t size) {
 	const uint8_t *start = dst, *end = src + size;
-	uint8_t code = 0xFF, copy = 0x0;
+	uint8_t code = 0xFF, copy = _COBEND;
 
 	for (; src < end; copy--) {
-		if (copy != 0x0) {
+		if (copy != _COBEND) {
 			*dst++ = *src++;
 		} else {
-			if (code != 0xFF)
-				*dst++ = 0x0;
+			if (code != 0xFF) {
+				*dst++ = _COBEND;
+			}
 			copy = code = *src++;
-			if (code == 0x0)
+			if (code == _COBEND) {
 				break; /* Source length too long */
+			}
 		}
 	}
 	return dst - start;
 }
-
 /************************************************************** END OF FILE ***/
